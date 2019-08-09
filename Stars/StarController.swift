@@ -12,13 +12,24 @@ import Foundation
 class StarController {
     
     private(set) var stars: [Star] = []
-    init() {
-        loadFromPersistentStore()
-    }
+   
     private var persistentFileURL: URL? {
         let fileManager = FileManager.default
         guard let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {return nil}
         return documents.appendingPathComponent("stars.plist")
+    }
+    
+    
+    init() {
+        loadFromPersistentStore()
+    }
+    
+    @discardableResult func createStar(named name: String, withDistance distance: Double) -> Star {
+        
+        let star = Star(name: name, distance: distance)
+        stars.append(star)
+        saveToPersistentStore()
+        return star
     }
     
     func listStars() -> String {
@@ -27,17 +38,6 @@ class StarController {
             output += "\(stars.name) is \(stars.distanceDescription). \n"
         }
         return output
-    }
-    
-    
-  
-    
-    @discardableResult func createStar(named name: String, withDistance distance: Double) -> Star {
-        
-        let star = Star(name: name, distance: distance)
-        stars.append(star)
-        return star
-        
     }
     
     func saveToPersistentStore() {
